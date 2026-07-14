@@ -6,6 +6,7 @@ import com.jaymecaironi.pixflow.application.port.out.TransactionEventPublisher;
 import com.jaymecaironi.pixflow.application.port.out.TransactionRepository;
 import com.jaymecaironi.pixflow.domain.service.FraudRule;
 import com.jaymecaironi.pixflow.domain.service.HighAmountRule;
+import com.jaymecaironi.pixflow.application.port.out.AccountRepository;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,9 @@ public class BeanConfiguration {
     
     @Bean
     CreateTransactionUseCase createTransactionUseCase(TransactionRepository transactionRepository,
-                                                    TransactionEventPublisher transactionEventPublisher) {
-        return new CreateTransactionService(transactionRepository, transactionEventPublisher);
+                                                    TransactionEventPublisher transactionEventPublisher,
+                                                    AccountRepository accountRepository) {
+        return new CreateTransactionService(transactionRepository, transactionEventPublisher, accountRepository);
     }
 
     @Bean
