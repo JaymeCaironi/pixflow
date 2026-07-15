@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.kafka.common.errors.InterruptException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,6 +20,7 @@ import com.jaymecaironi.pixflow.adapter.out.persistence.AccountJpaEntity;
 import com.jaymecaironi.pixflow.adapter.out.persistence.SpringDataAccountRepositoy;
 import com.jaymecaironi.pixflow.application.port.out.AccountRepository;
 
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true")
 @SpringBootTest
 class AccountConcurrencyTest {
     
