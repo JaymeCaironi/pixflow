@@ -4,6 +4,10 @@ import com.jaymecaironi.pixflow.adapter.out.mongo.FraudAlertDocument;
 import com.jaymecaironi.pixflow.adapter.out.mongo.FraudAlertMongoRepository;
 import com.jaymecaironi.pixflow.domain.model.Transaction;
 import com.jaymecaironi.pixflow.domain.service.FraudRule;
+
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,6 +35,14 @@ public class FraudDetectionConsumer {
         rules.forEach(rule -> rule.evaluate(tx).ifPresent(reason -> {
             var alert = new FraudAlertDocument(UUID.randomUUID().toString(), tx.id(), 
                 tx.amount(), reason, Instant.now());
+            alertRepository.save(alert);
+            log.warn("FRAUDE SUSPEITA {} -> {}", tx.id(), reason);
+        }));
+    }
+    @WithSpan("avaliar-regras-fraude")
+    private void avaliar(@SpanAttribute("transaction.id") String txId, Transaction tx) {
+        rules.forEach(rule -> rule.evaluate(tx).ifPresent(reason -> {
+            var alert = new FraudAlertDocument(UUID.randomUUID().toString(), tx.id(), tx.amount(), reason, Instant.now());
             alertRepository.save(alert);
             log.warn("FRAUDE SUSPEITA {} -> {}", tx.id(), reason);
         }));
